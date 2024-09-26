@@ -32,6 +32,31 @@ weather_df =
   select(name, id, everything())
 ```
 
+# first plot
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+```{r}
+ggp_weather_scatterplot = 
+  weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+
+ggp_weather_scatterplot
+```
+
+
+
+
 
 
 
