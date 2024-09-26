@@ -54,8 +54,50 @@ ggp_weather_scatterplot =
 ggp_weather_scatterplot
 ```
 
+```{r}
+weather_df |> 
+  filter(is.na(tmax))
+```
 
 
+# fancier scatterplots
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) +
+  geom_smooth(se = FALSE)
+```
+
+# use faceting
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+```
+
+Let's make a somewhat more interesting plot
+
+```{r}
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_point(aes(size = prcp), alpha = .3) +
+  geom_smooth(se = FALSE) + 
+  facet_grid(. ~ name)
+```
+
+# learning assessment 1 
+
+```{r}
+weather_df |> 
+  filter(name == "CentralPark_NY") |> 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) |> 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
+```
 
 
 
