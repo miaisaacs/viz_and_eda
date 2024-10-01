@@ -215,38 +215,47 @@ pulse_df =
     cols = bdi_score_bl:bdi_score_12m,
     names_to = "visit",
     values_to = "bdi_score",
-    names_prefix = "bdi_score"
-  )
+    names_prefix = "bdi_score_"
+  ) |> 
+  mutate(visit = ifelse(visit == "bl", "00m", visit))
 
 pulse_df |> 
   ggplot(aes(x = visit, y = bdi_score)) +
   geom_boxplot()
 ```
 
+looking at pup-level outcomes 
 
 ```{r}
-pulse_data = 
-  haven::read_sas("./data/public_pulse_data.sas7bdat") |>
+pup_data = 
+  read_csv("./data/FAS_pups.csv", na = c("NA", ".", "")) |>
   janitor::clean_names() |>
-  pivot_longer(
-    bdi_score_bl:bdi_score_12m,
-    names_to = "visit", 
-    names_prefix = "bdi_score_",
-    values_to = "bdi") |>
-  select(id, visit, everything()) |>
   mutate(
-    visit = recode(visit, "bl" = "00m"),
-    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) |>
-  arrange(id, visit)
+    sex = 
+      case_match(
+        sex, 
+        1 ~ "male", 
+        2 ~ "female"))
 
-ggplot(pulse_data, aes(x = visit, y = bdi)) + 
-  geom_boxplot()
+litter_data = 
+  read_csv("./data/FAS_litters.csv", na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+
+fas_data = left_join(pup_data, litter_data, by = "litter_number") 
+
+fas_data |> 
+  select(sex, dose, day_of_tx, pd_ears:pd_walk) |> 
+  pivot_longer(
+    pd_ears:pd_walk,
+    names_to = "outcome", 
+    values_to = "pn_day") |> 
+  drop_na() |> 
+  mutate(outcome = forcats::fct_reorder(outcome, pn_day, median)) |> 
+  ggplot(aes(x = dose, y = pn_day)) + 
+  geom_violin() + 
+  facet_grid(day_of_tx ~ outcome)
 ```
-
-
-
-
-
 
 
 
