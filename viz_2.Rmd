@@ -76,6 +76,121 @@ weather_df |>
   viridis::scale_color_viridis(discrete = TRUE)
 ```
 
+# themes
+
+```{r}
+ggp_scatterplot = 
+  weather_df |> 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    color = "Location",
+    caption = "Data from the rnoaa package") + 
+  scale_color_hue(h = c(100, 300)) +
+  viridis::scale_color_viridis(discrete = TRUE)
+```
+
+```{r}
+ggp_scatterplot +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+ggp_scatterplot +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+order matters!! program reads code in order
+
+```{r}
+ggp_scatterplot + 
+  theme_classic() + 
+  theme(legend.position = "bottom")
+```
+
+```{r}
+ggp_scatterplot + 
+  ggthemes::theme_excel() + 
+  theme(legend.position = "bottom")
+```
+
+# learning assessment 
+
+```{r}
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_smooth(se = FALSE) + 
+  geom_point(aes(size = prcp), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Date",
+    y = "Maximum daily temperature (C)",
+    color = "Location",
+    caption = "Data from the rnoaa package"
+  ) + 
+  viridis::scale_color_viridis(discrete = TRUE) + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
+
+# extra bonus stuff in ggplot
+
+use different datasets in different geoms
+
+```{r}
+central_park_df =
+  weather_df |> 
+  filter(name == "CentralPark_NY")
+
+molokai_df =
+  weather_df |> 
+  filter(name == "Molokai_HI")
+
+molokai_df |> 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point() +
+  geom_line(data = central_park_df)
+```
+
+# multiple panels
+
+```{r}
+weather_df |> 
+  ggplot(aes(x = tmax, fill = name)) +
+  geom_density() +
+  facet_grid(. ~ name)
+```
+
+```{r}
+ggplot_tmax_tmin =
+  weather_df |> 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .3)
+
+ggp_tmax_density =
+  weather_df |> 
+  ggplot(aes(x = tmax, fill = name)) +
+  geom_density(alpha = .3)
+
+ggp_tmax_date =
+  weather_df |> 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+(ggplot_tmax_tmin + ggp_tmax_density) / ggp_tmax_date
+```
+
+
+
+
+
+
+
+
 
 
 
