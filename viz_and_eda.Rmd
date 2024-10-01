@@ -2,7 +2,7 @@
 title: "Visualization"
 author: "Mia Isaacs"
 date: "2024-09-26"
-output: html_document
+output: github_document
 ---
 
 # load packages
