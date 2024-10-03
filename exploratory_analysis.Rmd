@@ -1,0 +1,6 @@
+---
+title: "Exploratory Analysis"
+author: "Mia Isaacs"
+date: "2024-10-03"
+output: github_document
+---
