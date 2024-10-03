@@ -110,6 +110,99 @@ weather_df |>
   janitor::tabyl(name, cold)
 ```
 
+# general numeric summaries
+
+```{r}
+weather_df |>
+  group_by(month) |>
+  summarize(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    mean_prec = mean(prcp, na.rm = TRUE),
+    median_tmax = median(tmax),
+    sd_tmax = sd(tmax))
+```
+
+```{r}
+weather_df |>
+  group_by(name, month) |>
+  summarize(
+    mean_tmax = mean(tmax),
+    median_tmax = median(tmax))
+```
+
+```{r}
+weather_df |>
+  group_by(name, month) |>
+  summarize(mean_tmax = mean(tmax, na.rm = TRUE)) |>
+  ggplot(aes(x = month, y = mean_tmax, color = name)) + 
+    geom_point() + geom_line() + 
+    theme(legend.position = "bottom")
+```
+
+format for readers
+
+```{r}
+weather_df |>
+  group_by(name, month) |>
+  summarize(mean_tmax = mean(tmax, na.rm = TRUE)) |> 
+  pivot_wider(
+    names_from = name,
+    values_from = mean_tmax) |> 
+  knitr::kable(
+    digits = 3,
+    col.names = c("Month", "Central Park", "Molokai", "Waterhole"))
+```
+
+# grouped mutates
+
+```{r}
+weather_df |>
+  group_by(name) |>
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax) |> 
+  ggplot(aes(x = date, y = centered_tmax, color = name)) + 
+    geom_point() 
+```
+
+find hottest and coldest days
+
+```{r}
+weather_df |>
+  group_by(name, month) |>
+  mutate(temp_rank = min_rank(tmax)) |> 
+  filter(temp_rank < 10)
+```
+
+```{r}
+weather_df |>
+  group_by(name, month) |>
+  filter(min_rank(tmax) < 2)
+```
+
+```{r}
+weather_df |>
+  group_by(name, month) |>
+  filter(min_rank(desc(tmax)) < 4)
+```
+
+```{r}
+weather_df |>
+  group_by(name) |>
+  mutate(temp_change = tmax - lag(tmax))
+```
+
+```{r}
+weather_df |>
+  group_by(name) |>
+  mutate(temp_change = tmax - lag(tmax)) |>
+  summarize(
+    temp_change_sd = sd(temp_change, na.rm = TRUE),
+    temp_change_max = max(temp_change, na.rm = TRUE))
+```
+
+
+
 
 
 
